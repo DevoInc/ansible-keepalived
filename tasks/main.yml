@@ -8,28 +8,45 @@
   tags: keepalived
 
 - name: Copy keepalived systemd service file
-  copy: src=keepalived.service dest=/etc/systemd/system/keepalived.service mode=0644 owner=root group=root
+  copy: 
+    src: keepalived.service
+    dest: /etc/systemd/system/keepalived.service
+    mode: 0644
+    owner: root
+    group: root
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
   tags: keepalived
 
 - name: Install keepalived package
-  apt: name=keepalived state=latest
+  apt: 
+    name: keepalived 
+    state: latest
   tags: keepalived
 
 - name: Copy health check script
-  template: src={{ item.1.filename }}.j2 dest="{{ item.1.path }}/{{ item.1.filename }}" mode='0755'
+  template: 
+    src: {{ item.1.filename }}.j2 
+    dest: "{{ item.1.path }}/{{ item.1.filename }}"
+    mode: 0755
   tags: keepalived
   with_subelements:
     - "{{ keepalived_vrrp_instances }}"
     - scripts
 
 - name: Configure keepalived
-  template: src=keepalived.conf.j2 dest=/etc/keepalived/keepalived.conf
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: 0644
   tags: keepalived
   notify: restart keepalived
 
 - name: Start keepalived
-  service: name=keepalived state=started
+  service:
+    name: keepalived
+    state: started
   tags: keepalived
 
 - name: Disable keepalived service
