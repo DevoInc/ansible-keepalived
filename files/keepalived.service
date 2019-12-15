@@ -1,0 +1,20 @@
+#
+# keepalived control files for systemd
+#
+
+[Unit]
+Description=LVS and VRRP High Availability monitor
+After=network.target
+ConditionFileNotEmpty=/etc/keepalived/keepalived.conf
+
+[Service]
+Type=simple
+# Ubuntu/Debian convention:
+EnviromentFile=-/etc/keepalived/keepalived.conf
+ExecStart=/usr/sbin/keepalived -f /etc/keepalived/keepalived.conf --dont-fork
+ExecReload=/bin/kill -s HUP $MAINPID
+# keepalived needs to be in charge of killing its own children.
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

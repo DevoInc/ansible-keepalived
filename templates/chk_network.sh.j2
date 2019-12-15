@@ -1,0 +1,14 @@
+#!/bin/bash
+
+NUM_PINGS=3
+GW={{ ansible_default_ipv4.gateway }}
+
+NUM_PINGS_THAT_REACHED_THE_GW=$(ping -c $NUM_PINGS $GW | grep 'received' | awk -F',' '{ print $2 }' | awk '{ print $1 }')
+if [ $NUM_PINGS_THAT_REACHED_THE_GW == 0 ];
+then
+    # I can't reach my own gw, therefore I exit with ERROR status and
+    # keepalived will stop sending broadcast packets so the other node
+    # will take over the service IP
+    echo "Gateway not reachable" >&2
+    exit 1
+fi

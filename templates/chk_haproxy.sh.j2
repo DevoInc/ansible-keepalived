@@ -1,0 +1,11 @@
+#!/bin/bash
+
+HAPROXY_PSS_RUNNING=$(ps aux | grep -c '/usr/sbin/haprox[y]')
+if [ ${HAPROXY_PSS_RUNNING} -lt 2 ];
+then
+    # haproxy is not running, therefore I exit with ERROR status and
+    # keepalived will stop sending broadcast packets so the other node
+    # will take over the service IP
+    echo "HAProxy not running" >&2
+    exit 1
+fi

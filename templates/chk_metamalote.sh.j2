@@ -1,0 +1,11 @@
+#!/bin/bash
+
+BATRASIO_PSS_RUNNING=$(ps aux | grep -c 'metamalote')
+if [ ${BATRASIO_PSS_RUNNING} -lt 2 ];
+then
+    # batrasio is not running, therefore I exit with ERROR status and
+    # keepalived will stop sending broadcast packets so the other node
+    # will take over the service IP
+    echo "Batrasio not running" >&2
+    exit 1
+fi

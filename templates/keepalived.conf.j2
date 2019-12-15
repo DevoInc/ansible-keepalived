@@ -1,0 +1,53 @@
+#jinja2: lstrip_blocks: True
+! Configuration File for keepalived service
+! This file has been generated automatically
+
+{%- for vrrp_instance in keepalived_vrrp_instances %}
+
+{% for script in vrrp_instance.scripts %}
+vrrp_script {{ script.name }} {
+    script {{ script.path }}{{ script.filename }}
+    interval {{ script.interval }}
+}
+{% endfor %}
+
+vrrp_instance {{ vrrp_instance.name }} {
+
+    state {{ vrrp_instance.state }}
+
+    interface {{ vrrp_instance.interface }}
+
+    virtual_router_id {{ vrrp_instance.virtual_router_id }}
+
+    {% if vrrp_instance.state.lower() == "master" %}
+    priority {{ vrrp_instance.master_priority }}
+    {% else %}
+    priority {{ vrrp_instance.slave_priority }}
+    {% endif %}
+
+    advert_int {{ vrrp_instance.advert_int }}
+
+    unicast_src_ip {{ vrrp_instance.unicast_src_ip }}
+
+    unicast_peer {
+        {{ vrrp_instance.unicast_peer_ip }}
+    }
+
+    authentication {
+        auth_type {{ vrrp_instance.auth_type }}
+        auth_pass {{ vrrp_instance.auth_pass }}
+    }
+
+    track_script {
+        {% for script in vrrp_instance.scripts %}
+            {{ script.name }}
+        {% endfor %}
+    }
+
+    virtual_ipaddress {
+        {{ vrrp_instance.virtual_ipaddress_cidr_ip }} brd {{ vrrp_instance.virtual_ipaddress_broadcast }} dev {{ vrrp_instance.interface }}
+    }
+
+}
+
+{% endfor -%}
