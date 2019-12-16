@@ -1,0 +1,14 @@
+---
+- name: Install required packages
+  yum:
+    name: {{ item }}
+    state: present
+  with_items:
+    - gcc 
+    - kernel-headers
+    - openssl-devel
+
+- name: Install keepalived
+  yum:
+    name: keepalived
+    state: present

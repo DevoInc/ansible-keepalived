@@ -1,0 +1,14 @@
+---
+- name: Ensure keepalived repo is installed
+  apt_repository:
+    repo: 'ppa:keepalived/stable'
+    state: present
+  tags: keepalived
+
+- name: Install keepalived package
+  apt: 
+    name: keepalived 
+    state: latest
+  tags: keepalived
+
+
