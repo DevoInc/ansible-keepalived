@@ -1,12 +1,18 @@
 ---
-# This role installs and sets up keepalived
-
 - name: Ensure keepalived repo is installed
   apt_repository:
     repo: 'ppa:keepalived/stable'
     state: present
+  when: ansible_os_family == 'Debian'
   tags: keepalived
 
+- name: Install keepalived package
+  package: 
+    name: keepalived 
+    state: latest
+  tags: keepalived
+
+# This role installs and sets up keepalived
 - name: Copy keepalived systemd service file
   copy: 
     src: keepalived.service
@@ -15,12 +21,6 @@
     owner: root
     group: root
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
-  tags: keepalived
-
-- name: Install keepalived package
-  apt: 
-    name: keepalived 
-    state: latest
   tags: keepalived
 
 - name: Copy health check script
@@ -50,18 +50,18 @@
   tags: keepalived
 
 - name: Disable keepalived service
-  service: name=keepalived enabled=no
+  service: 
+    name: keepalived
+    enabled: no
   tags: keepalived
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04' or
         ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
 
 - name: Ensure systemd is reloaded if keepalived service has changed
   command: systemctl daemon-reload
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04' or
-        ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
 
 - name: Enable keepalived service
-  service: name=keepalived enabled=yes
+  service: 
+    name: keepalived
+    enabled: yes
   tags: keepalived
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04' or
-        ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
