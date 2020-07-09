@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BATRASIO_PSS_RUNNING=$(ps aux | grep -c 'batrasio')
+BATRASIO_PSS_RUNNING=$(ps aux | grep -v chk_batrasio | grep -v grep | grep -c 'batrasio')
 if [ ${BATRASIO_PSS_RUNNING} -lt 2 ];
 then
     # batrasio is not running, therefore I exit with ERROR status and
