@@ -7,14 +7,14 @@
   tags: keepalived
 
 - name: Install keepalived package
-  package: 
-    name: keepalived 
+  package:
+    name: keepalived
     state: latest
   tags: keepalived
 
 # This role installs and sets up keepalived
 - name: Copy keepalived systemd service file
-  copy: 
+  copy:
     src: keepalived.service
     dest: /etc/systemd/system/keepalived.service
     mode: 0644
@@ -24,8 +24,8 @@
   tags: keepalived
 
 - name: Copy health check script
-  template: 
-    src: {{ item.1.filename }}.j2 
+  template:
+    src: "{{ item.1.filename }}.j2"
     dest: "{{ item.1.path }}/{{ item.1.filename }}"
     mode: 0755
   tags: keepalived
@@ -50,7 +50,7 @@
   tags: keepalived
 
 - name: Disable keepalived service
-  service: 
+  service:
     name: keepalived
     enabled: no
   tags: keepalived
@@ -61,7 +61,7 @@
   command: systemctl daemon-reload
 
 - name: Enable keepalived service
-  service: 
+  service:
     name: keepalived
     enabled: yes
   tags: keepalived
