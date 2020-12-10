@@ -3,14 +3,12 @@
   apt_repository:
     repo: 'ppa:keepalived/stable'
     state: present
-  when: ansible_os_family == 'Debian'
-  tags: keepalived
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
 
 - name: Install keepalived package
   package:
     name: keepalived
     state: latest
-  tags: keepalived
 
 # This role installs and sets up keepalived
 - name: Copy keepalived systemd service file
@@ -21,7 +19,6 @@
     owner: root
     group: root
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
-  tags: keepalived
 
 - name: Copy health check script
   template:
@@ -40,20 +37,17 @@
     owner: root
     group: root
     mode: 0644
-  tags: keepalived
   notify: restart keepalived
 
 - name: Start keepalived
   service:
     name: keepalived
     state: started
-  tags: keepalived
 
 - name: Disable keepalived service
   service:
     name: keepalived
     enabled: no
-  tags: keepalived
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04' or
         ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
 
@@ -64,4 +58,3 @@
   service:
     name: keepalived
     enabled: yes
-  tags: keepalived
